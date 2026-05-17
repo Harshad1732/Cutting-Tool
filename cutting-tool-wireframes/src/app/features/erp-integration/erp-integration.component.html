@@ -1,0 +1,168 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">ERP / Shopfloor Integration</h1>
+    <p class="page-subtitle">Procurement starts from actual production need — work orders, BOM and tool history auto-fetched from your ERP.</p>
+  </div>
+  <div class="erp-status">
+    <span class="live-dot"></span>
+    <span class="erp-name">SAP B1 / Tally · Live</span>
+  </div>
+</div>
+
+<!-- Integration status banner -->
+<mat-card class="banner">
+  <div class="banner-left">
+    <mat-icon>hub</mat-icon>
+    <div>
+      <strong>Connected to ERP</strong>
+      <span>Auto-fetched 5 active work orders · Last sync 2 minutes ago</span>
+    </div>
+  </div>
+  <div class="banner-right">
+    <div class="banner-stat"><span>Work Orders</span><strong>24</strong></div>
+    <div class="banner-stat"><span>BOM Items</span><strong>312</strong></div>
+    <div class="banner-stat"><span>Tools Tracked</span><strong>86</strong></div>
+    <button mat-stroked-button>
+      <mat-icon>sync</mat-icon>
+      Sync Now
+    </button>
+  </div>
+</mat-card>
+
+<div class="erp-grid">
+  <!-- LEFT: Work Orders table -->
+  <mat-card class="panel">
+    <div class="panel-head">
+      <div>
+        <h3>Active Work Orders</h3>
+        <p>Click any row to see details and auto-procurement plan</p>
+      </div>
+    </div>
+    <table mat-table [dataSource]="workOrders" class="wo-table">
+      <ng-container matColumnDef="woNumber">
+        <th mat-header-cell *matHeaderCellDef>WO #</th>
+        <td mat-cell *matCellDef="let wo"><strong>{{ wo.woNumber }}</strong></td>
+      </ng-container>
+      <ng-container matColumnDef="component">
+        <th mat-header-cell *matHeaderCellDef>Component</th>
+        <td mat-cell *matCellDef="let wo">{{ wo.component }}</td>
+      </ng-container>
+      <ng-container matColumnDef="qty">
+        <th mat-header-cell *matHeaderCellDef>Qty</th>
+        <td mat-cell *matCellDef="let wo">{{ wo.quantity }}</td>
+      </ng-container>
+      <ng-container matColumnDef="material">
+        <th mat-header-cell *matHeaderCellDef>Material</th>
+        <td mat-cell *matCellDef="let wo">{{ wo.material }}</td>
+      </ng-container>
+      <ng-container matColumnDef="due">
+        <th mat-header-cell *matHeaderCellDef>Due</th>
+        <td mat-cell *matCellDef="let wo">{{ wo.dueDate }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let wo">
+          <span class="status-pill" [class]="statusClass(wo.status)">{{ wo.status }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let wo">
+          <button mat-icon-button>
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns"
+          [class.row-selected]="selected()?.id === row.id"
+          (click)="select(row)"></tr>
+    </table>
+  </mat-card>
+
+  <!-- RIGHT: Selected WO Details -->
+  @if (selected(); as wo) {
+    <div class="detail-col">
+      <mat-card class="panel detail-head">
+        <div class="detail-top">
+          <div>
+            <span class="detail-eyebrow">Work Order</span>
+            <h3>{{ wo.woNumber }}</h3>
+            <p class="detail-component">{{ wo.component }} · {{ wo.quantity }} pcs</p>
+          </div>
+          <span class="status-pill big" [class]="statusClass(wo.status)">{{ wo.status }}</span>
+        </div>
+        <div class="detail-meta">
+          <div><span>Material</span><strong>{{ wo.material }}</strong></div>
+          <div><span>Due Date</span><strong>{{ wo.dueDate }}</strong></div>
+          <div><span>Operations</span><strong>{{ wo.operations.length }}</strong></div>
+        </div>
+      </mat-card>
+
+      <!-- Auto-procurement banner -->
+      <mat-card class="auto-banner">
+        <div class="auto-banner-icon">
+          <mat-icon>auto_awesome</mat-icon>
+        </div>
+        <div class="auto-banner-body">
+          <strong>Auto-procurement triggered</strong>
+          <p>Based on this work order, the platform identified 3 tools required. Procurement plan ready for approval.</p>
+        </div>
+        <button mat-flat-button color="primary">Review Plan</button>
+      </mat-card>
+
+      <!-- Operations chain -->
+      <mat-card class="panel">
+        <h4 class="section-h">Required Operations</h4>
+        <div class="ops-chain">
+          @for (op of wo.operations; track op; let i = $index) {
+            <div class="op-chip-box">
+              <span class="op-num">{{ i + 1 }}</span>
+              <span>{{ op }}</span>
+            </div>
+            @if (i < wo.operations.length - 1) {
+              <mat-icon class="op-arrow">east</mat-icon>
+            }
+          }
+        </div>
+      </mat-card>
+
+      <!-- BOM + Tool History tabs -->
+      <mat-card class="panel">
+        <mat-tab-group>
+          <mat-tab label="BOM (Auto-fetched)">
+            <div class="tab-body">
+              @for (b of wo.bom; track b.partCode) {
+                <div class="bom-row">
+                  <div>
+                    <strong>{{ b.partCode }}</strong>
+                    <span>{{ b.description }}</span>
+                  </div>
+                  <div class="bom-qty">{{ b.qty }} <small>{{ b.uom }}</small></div>
+                </div>
+              }
+            </div>
+          </mat-tab>
+          <mat-tab label="Tool Consumption History">
+            <div class="tab-body">
+              @for (t of wo.toolHistory; track t.toolCode) {
+                <div class="tool-row">
+                  <div>
+                    <strong>{{ t.toolCode }}</strong>
+                    <span>Last used {{ t.lastUsed }}</span>
+                  </div>
+                  <div class="tool-stats">
+                    <div><span>Consumed</span><strong>{{ t.consumed }}</strong></div>
+                    <div class="failure" [class.bad]="t.failures > 0">
+                      <span>Failures</span><strong>{{ t.failures }}</strong>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card>
+    </div>
+  }
+</div>

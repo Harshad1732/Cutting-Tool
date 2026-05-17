@@ -1,0 +1,59 @@
+<mat-sidenav-container class="shell-container" autosize>
+  <mat-sidenav mode="side" opened class="shell-sidenav">
+    <div class="sidenav-brand" routerLink="/">
+      <span class="brand-mark">
+        <span class="brand-bit">BIT</span><span class="brand-collage">COLLAGE</span>
+      </span>
+      <span class="brand-sub">Cutting Tool Platform</span>
+    </div>
+    <mat-nav-list class="sidenav-list">
+      @for (item of navItems; track item.route) {
+        <a mat-list-item
+           [routerLink]="item.route"
+           routerLinkActive="active-link"
+           class="nav-link">
+          <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+          <span matListItemTitle>{{ item.label }}</span>
+        </a>
+      }
+    </mat-nav-list>
+    <div class="sidenav-footer">
+      <a routerLink="/" class="back-link">
+        <mat-icon>arrow_back</mat-icon>
+        <span>Back to Pitch</span>
+      </a>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="shell-content">
+    <mat-toolbar class="shell-toolbar">
+      <span class="toolbar-title">CNC Machining Procurement Intelligence</span>
+      <span class="toolbar-spacer"></span>
+      <button mat-icon-button matBadge="3" matBadgeColor="warn" matBadgeSize="small">
+        <mat-icon>notifications_none</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon>help_outline</mat-icon>
+      </button>
+      <button mat-button [matMenuTriggerFor]="userMenu" class="user-chip">
+        <span class="user-chip-inner">
+          <span class="user-avatar">AD</span>
+          <span class="user-meta">
+            <span class="user-name">Admin</span>
+            <span class="user-role">Platform Administrator</span>
+          </span>
+          <mat-icon class="user-caret">expand_more</mat-icon>
+        </span>
+      </button>
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item><mat-icon>person</mat-icon>Profile</button>
+        <button mat-menu-item><mat-icon>settings</mat-icon>Settings</button>
+        <button mat-menu-item><mat-icon>logout</mat-icon>Sign out</button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <div class="shell-page">
+      <router-outlet />
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,245 @@
+<div class="landing">
+  <!-- Top Nav -->
+  <header class="top-nav">
+    <div class="container nav-inner">
+      <div class="brand">
+        <span class="brand-mark">
+          <span class="brand-bit">BIT</span><span class="brand-collage">COLLAGE</span>
+          <sup>®</sup>
+        </span>
+      </div>
+      <nav class="nav-links">
+        <a href="#problem">Problem</a>
+        <a href="#solution">Solution</a>
+        <a href="#how">How It Works</a>
+        <a href="#impact">Impact</a>
+        <a routerLink="/app" mat-flat-button color="primary" class="cta-nav">
+          Launch Prototype
+          <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">An Industry-Led MSME Initiative</span>
+        <h1>
+          AI-Driven Tool Selection &
+          <span class="accent">Procurement Platform</span>
+          for CNC Machining MSMEs
+        </h1>
+        <p class="lede">
+          A smart, application-driven digital procurement ecosystem that helps Indian MSMEs
+          access standardised metal cutting tools — embedded directly inside ERP and shopfloor systems.
+        </p>
+        <div class="hero-cta">
+          <a routerLink="/app" mat-flat-button color="primary" class="cta-primary">
+            <mat-icon>rocket_launch</mat-icon>
+            Launch Interactive Prototype
+          </a>
+          <a href="#solution" mat-stroked-button class="cta-secondary">
+            See the Solution
+          </a>
+        </div>
+        <div class="hero-tags">
+          @for (u of targetUsers; track u) {
+            <span class="tag">{{ u }}</span>
+          }
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <mat-icon>smart_toy</mat-icon>
+            <span>Recommendation Preview</span>
+          </div>
+          <div class="hero-card-row">
+            <span class="lbl">Material</span><span class="val">EN24 Alloy Steel</span>
+          </div>
+          <div class="hero-card-row">
+            <span class="lbl">Operation</span><span class="val">Turning · Finishing</span>
+          </div>
+          <div class="hero-card-row">
+            <span class="lbl">Machine</span><span class="val">Mazak QTN-200MY</span>
+          </div>
+          <div class="hero-card-result">
+            <div class="result-tool">CNMG 120408-PM 4325</div>
+            <div class="result-brand">Sandvik Coromant</div>
+            <div class="result-params">
+              <div><span>Vc</span><strong>280</strong>m/min</div>
+              <div><span>f</span><strong>0.25</strong>mm/rev</div>
+              <div><span>ap</span><strong>1.5</strong>mm</div>
+            </div>
+            <div class="result-confidence">
+              <span>Confidence</span>
+              <div class="conf-bar"><div class="conf-fill" style="width:87%"></div></div>
+              <strong>87%</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem -->
+  <section id="problem" class="section section-light">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow eyebrow-red">The Problem</span>
+        <h2>MSMEs face critical inefficiencies in cutting tool procurement</h2>
+        <p>Tool selection today depends on tribal knowledge and distributor recommendations — leading to costly downstream issues.</p>
+      </div>
+      <div class="problem-grid">
+        @for (p of problems; track p) {
+          <div class="problem-card">
+            <mat-icon color="warn">error_outline</mat-icon>
+            <span>{{ p }}</span>
+          </div>
+        }
+      </div>
+      <div class="problem-impact">
+        <div class="impact-pill"><mat-icon>build</mat-icon>Incorrect Tool Selection</div>
+        <mat-icon class="arrow">east</mat-icon>
+        <div class="impact-pill"><mat-icon>broken_image</mat-icon>Frequent Tool Failures</div>
+        <mat-icon class="arrow">east</mat-icon>
+        <div class="impact-pill"><mat-icon>timer_off</mat-icon>Machine Downtime</div>
+        <mat-icon class="arrow">east</mat-icon>
+        <div class="impact-pill impact-pill-red"><mat-icon>trending_up</mat-icon>Higher Cost/Component</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution Features -->
+  <section id="solution" class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Our Solution</span>
+        <h2>A Machining-Aware Procurement Intelligence Platform</h2>
+        <p>Four integrated capabilities that together close the loop from shopfloor need to procurement to performance feedback.</p>
+      </div>
+      <div class="features-grid">
+        @for (f of features; track f.title) {
+          <mat-card class="feature-card" [class.feature-card--highlight]="f.highlight">
+            <div class="feature-card-head">
+              <div class="feature-icon">
+                <mat-icon>{{ f.icon }}</mat-icon>
+              </div>
+              <mat-chip class="feature-badge" [class.feature-badge--highlight]="f.highlight">
+                {{ f.badge }}
+              </mat-chip>
+            </div>
+            <h3>{{ f.title }}</h3>
+            <p>{{ f.description }}</p>
+            <ul>
+              @for (b of f.bullets; track b) {
+                <li><mat-icon>check_circle</mat-icon><span>{{ b }}</span></li>
+              }
+            </ul>
+          </mat-card>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Differentiation -->
+  <section class="section section-dark">
+    <div class="container">
+      <div class="section-head section-head--inverse">
+        <span class="eyebrow eyebrow-green">Our Winning Edge</span>
+        <h2>Built differently — engineering-first, not marketplace-first</h2>
+      </div>
+      <div class="diff-table">
+        <div class="diff-row diff-row-head">
+          <div>Typical Solutions</div>
+          <div>BITCOLLAGE Approach</div>
+        </div>
+        @for (d of differentiation; track d.typical) {
+          <div class="diff-row">
+            <div class="diff-typical">
+              <mat-icon>close</mat-icon>{{ d.typical }}
+            </div>
+            <div class="diff-us">
+              <mat-icon>check</mat-icon>{{ d.us }}
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="how" class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">How It Works</span>
+        <h2>From work order to optimised procurement in 7 steps</h2>
+        <p>A closed-loop flow that ties shopfloor reality to procurement decisions and back.</p>
+      </div>
+      <div class="flow">
+        @for (s of flow; track s.step) {
+          <div class="flow-step">
+            <div class="flow-step-num">{{ s.step }}</div>
+            <div class="flow-step-icon">
+              <mat-icon>{{ s.icon }}</mat-icon>
+            </div>
+            <h4>{{ s.title }}</h4>
+            <p>{{ s.description }}</p>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact -->
+  <section id="impact" class="section section-light">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow eyebrow-green">Forecasted Impact</span>
+        <h2>Measurable value for every CNC machining MSME</h2>
+      </div>
+      <div class="impact-grid">
+        @for (i of impact; track i.label) {
+          <div class="impact-card">
+            <div class="impact-value">{{ i.value }}</div>
+            <div class="impact-label">{{ i.label }}</div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="cta-banner">
+    <div class="container cta-banner-inner">
+      <div>
+        <h2>See the platform in action</h2>
+        <p>Explore the interactive wireframe prototype — Tool Recommendation Engine, ERP/Shopfloor Integration and Performance Analytics.</p>
+      </div>
+      <a routerLink="/app" mat-flat-button color="primary" class="cta-primary-lg">
+        <mat-icon>rocket_launch</mat-icon>
+        Launch Prototype
+        <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <div class="brand-mark brand-mark--footer">
+          <span class="brand-bit">BIT</span><span class="brand-collage">COLLAGE</span>
+          <sup>®</sup>
+        </div>
+        <p class="footer-tag">BITCOLLAGE® Consulting Services LLP</p>
+      </div>
+      <div class="footer-meta">
+        <p>Unit F3, 1st Floor, Eternity Commercial Premises, LBS Road,<br/>Near Teen Haat Naka, Thane West 400604, Maharashtra, India.</p>
+        <p>info&#64;bitcollage.in &nbsp;·&nbsp; www.bitcollageconsulting.com</p>
+      </div>
+    </div>
+  </footer>
+</div>

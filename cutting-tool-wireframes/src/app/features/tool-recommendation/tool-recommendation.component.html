@@ -1,0 +1,207 @@
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Tool Recommendation Engine</h1>
+    <p class="page-subtitle">
+      Get AI-driven cutting tool recommendations based on your material, operation and machine.
+    </p>
+  </div>
+  <mat-chip class="differentiator-chip">
+    <mat-icon>auto_awesome</mat-icon>
+    Core Differentiator
+  </mat-chip>
+</div>
+
+<div class="reco-grid">
+  <!-- LEFT: Input panel -->
+  <mat-card class="input-panel">
+    <h3 class="panel-title">Machining Inputs</h3>
+    <p class="panel-sub">Enter the conditions of your operation</p>
+
+    <div class="field">
+      <label>Workpiece Material</label>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-icon matPrefix>science</mat-icon>
+        <mat-select [(value)]="material">
+          @for (m of materials; track m) {
+            <mat-option [value]="m">{{ m }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="field">
+      <label>Operation Type</label>
+      <mat-button-toggle-group [(value)]="operation" class="op-toggle">
+        <mat-button-toggle value="Turning">
+          <mat-icon>rotate_right</mat-icon>Turning
+        </mat-button-toggle>
+        <mat-button-toggle value="Milling">
+          <mat-icon>blur_on</mat-icon>Milling
+        </mat-button-toggle>
+        <mat-button-toggle value="Drilling">
+          <mat-icon>vertical_align_bottom</mat-icon>Drilling
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+
+    <div class="field">
+      <label>Machine</label>
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-icon matPrefix>precision_manufacturing</mat-icon>
+        <mat-select [(value)]="machine">
+          @for (m of machines; track m) {
+            <mat-option [value]="m">{{ m }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="field">
+      <label>Surface Finish Target (Ra, μm)
+        <span class="slider-val">{{ surfaceFinish() }} μm</span>
+      </label>
+      <mat-slider min="0.4" max="6.3" step="0.1" discrete>
+        <input matSliderThumb [(ngModel)]="surfaceFinish" />
+      </mat-slider>
+    </div>
+
+    <div class="field">
+      <label>Tool Diameter (mm)
+        <span class="slider-val">Ø {{ toolDiameter() }} mm</span>
+      </label>
+      <mat-slider min="3" max="40" step="1" discrete>
+        <input matSliderThumb [(ngModel)]="toolDiameter" />
+      </mat-slider>
+    </div>
+
+    <div class="actions">
+      <button mat-flat-button color="primary" class="run-btn" (click)="getRecommendation()" [disabled]="loading()">
+        <mat-icon [class.spin]="loading()">{{ loading() ? 'autorenew' : 'auto_awesome' }}</mat-icon>
+        {{ loading() ? 'Analyzing...' : 'Get Recommendation' }}
+      </button>
+      <button mat-stroked-button (click)="clear()" [disabled]="loading()">Reset</button>
+    </div>
+  </mat-card>
+
+  <!-- RIGHT: Result panel -->
+  <div class="result-area">
+    @if (loading()) {
+      <mat-card class="loading-card">
+        <mat-icon class="spin pulse">smart_toy</mat-icon>
+        <h3>Analyzing your inputs…</h3>
+        <p>Matching against tool library · checking machine capability · ranking by performance</p>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </mat-card>
+    } @else if (result()) {
+      @if (result(); as r) {
+      <mat-card class="result-card">
+        <div class="result-head">
+          <div>
+            <mat-chip class="reco-badge">
+              <mat-icon>verified</mat-icon>
+              Recommended
+            </mat-chip>
+            <h2 class="tool-code">{{ r.code }}</h2>
+            <div class="tool-meta">
+              <span class="brand">{{ r.brand }}</span>
+              <span class="dot">·</span>
+              <span>{{ r.type }}</span>
+            </div>
+            <p class="tool-desc">{{ r.description }}</p>
+          </div>
+          <div class="confidence-ring">
+            <div class="ring-bg">
+              <div class="ring-fill" [style.--pct]="r.confidence"></div>
+              <div class="ring-center">
+                <span class="ring-pct">{{ r.confidence }}%</span>
+                <span class="ring-lbl">Confidence</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h4 class="section-h">Recommended Cutting Parameters</h4>
+        <div class="params-grid">
+          <div class="param">
+            <div class="param-icon"><mat-icon>speed</mat-icon></div>
+            <div class="param-val">{{ r.cuttingSpeed }}<small>m/min</small></div>
+            <div class="param-lbl">Cutting Speed (Vc)</div>
+          </div>
+          <div class="param">
+            <div class="param-icon"><mat-icon>swap_horiz</mat-icon></div>
+            <div class="param-val">{{ r.feedRate }}<small>mm/rev</small></div>
+            <div class="param-lbl">Feed Rate (f)</div>
+          </div>
+          <div class="param">
+            <div class="param-icon"><mat-icon>height</mat-icon></div>
+            <div class="param-val">{{ r.depthOfCut }}<small>mm</small></div>
+            <div class="param-lbl">Depth of Cut (ap)</div>
+          </div>
+          <div class="param">
+            <div class="param-icon"><mat-icon>history</mat-icon></div>
+            <div class="param-val">{{ r.estimatedLife }}<small>parts</small></div>
+            <div class="param-lbl">Estimated Tool Life</div>
+          </div>
+        </div>
+
+        <div class="result-footer">
+          <div class="price">
+            <span class="price-lbl">Unit Price</span>
+            <span class="price-val">₹{{ r.unitPrice }}</span>
+            <span class="price-note">Best price across 4 distributors</span>
+          </div>
+          <div class="result-actions">
+            <button mat-stroked-button>
+              <mat-icon>compare_arrows</mat-icon>
+              Compare Alternatives
+            </button>
+            <button mat-flat-button color="primary">
+              <mat-icon>add_shopping_cart</mat-icon>
+              Add to Procurement
+            </button>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Alternatives -->
+      <mat-card class="alt-card">
+        <h4 class="section-h">
+          <mat-icon>compare</mat-icon>
+          Alternative Recommendations
+        </h4>
+        <div class="alt-list">
+          @for (alt of alternatives(); track alt.id) {
+            <div class="alt-row">
+              <div class="alt-main">
+                <div class="alt-code">{{ alt.code }}</div>
+                <div class="alt-brand">{{ alt.brand }} · {{ alt.description }}</div>
+              </div>
+              <div class="alt-stats">
+                <div><span>Vc</span><strong>{{ alt.cuttingSpeed }}</strong></div>
+                <div><span>f</span><strong>{{ alt.feedRate }}</strong></div>
+                <div><span>Life</span><strong>{{ alt.estimatedLife }}p</strong></div>
+              </div>
+              <div class="alt-conf">
+                <span>{{ alt.confidence }}%</span>
+                <div class="conf-bar"><div class="conf-fill" [style.width.%]="alt.confidence"></div></div>
+              </div>
+              <div class="alt-price">₹{{ alt.unitPrice }}</div>
+            </div>
+          }
+        </div>
+      </mat-card>
+      }
+    } @else {
+      <mat-card class="empty-card">
+        <mat-icon>auto_awesome</mat-icon>
+        <h3>Ready to recommend</h3>
+        <p>Set your machining inputs on the left and hit <strong>Get Recommendation</strong> to see the AI-suggested cutting tool and parameters.</p>
+        <div class="empty-bullets">
+          <span><mat-icon>check_circle</mat-icon>Validated against your machine</span>
+          <span><mat-icon>check_circle</mat-icon>Real-time distributor pricing</span>
+          <span><mat-icon>check_circle</mat-icon>Learns from your shopfloor history</span>
+        </div>
+      </mat-card>
+    }
+  </div>
+</div>
